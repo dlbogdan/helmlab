@@ -51,6 +51,7 @@ spec:
                   key: LDAP_SEARCH_BIND_DN
                   name: config-env
             - name: LDAP_SEARCH_BIND_PASSWORD
+              valueFrom:
                 configMapKeyRef:
                   key: LDAP_SEARCH_BIND_PASSWORD
                   name: config-env
