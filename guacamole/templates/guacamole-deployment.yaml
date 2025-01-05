@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --chart --file ./guacamole.yml
+    kompose.version: 1.35.0 (9532ceef3)
+  labels:
+    io.kompose.service: guacamole
+  name: guacamole
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: guacamole
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert --chart --file ./guacamole.yml
+        kompose.version: 1.35.0 (9532ceef3)
+      labels:
+        io.kompose.service: guacamole
+    spec:
+      containers:
+        - env:
+            - name: CONFENV
+              valueFrom:
+                configMapKeyRef:
+                  key: CONFENV
+                  name: config-env
+            - name: GENENV
+              valueFrom:
+                configMapKeyRef:
+                  key: GENENV
+                  name: setup-env
+            - name: GUACD_HOSTNAME
+              value: guacd
+            - name: LDAP_ENCRYPTION_METHOD
+              value: none
+            - name: LDAP_HOSTNAME
+              valueFrom:
+                configMapKeyRef:
+                  key: LDAP_HOSTNAME
+                  name: config-env
+            - name: LDAP_PORT
+              value: "389"
+            - name: LDAP_SEARCH_BIND_DN
+              valueFrom:
+                configMapKeyRef:
+                  key: LDAP_SEARCH_BIND_DN
+                  name: config-env
+            - name: LDAP_SEARCH_BIND_PASSWORD
+                configMapKeyRef:
+                  key: LDAP_SEARCH_BIND_PASSWORD
+                  name: config-env
+            - name: LDAP_USERNAME_ATTRIBUTE
+              value: sAMAccountName
+            - name: LDAP_USER_BASE_DN
+              valueFrom:
+                configMapKeyRef:
+                  key: LDAP_USER_BASE_DN
+                  name: config-env
+            - name: MYSQL_AUTO_CREATE_ACCOUNTS
+              value: "true"
+            - name: MYSQL_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_DATABASE
+                  name: config-env
+            - name: MYSQL_HOSTNAME
+              value: mysql
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_PASSWORD
+                  name: setup-env
+            - name: MYSQL_PORT
+              value: "3306"
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_ROOT_PASSWORD
+                  name: setup-env
+            - name: MYSQL_USER
+              valueFrom:
+                configMapKeyRef:
+                  key: MYSQL_USER
+                  name: config-env
+            - name: TOTP_DIGITS
+              value: "6"
+            - name: TOTP_ENABLED
+              value: "true"
+            - name: TOTP_ISSUER
+              value: Apache Guacamole
+            - name: TOTP_MODE
+              value: sha1
+            - name: TOTP_PERIOD
+              value: "30"
+          image: guacamole/guacamole:1.5.5
+          name: guacamole
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /config
+              name: guacamole-config
+      restartPolicy: Always
+      volumes:
+        - name: guacamole-config
+          persistentVolumeClaim:
+            claimName: guacamole-config

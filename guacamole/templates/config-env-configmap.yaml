@@ -1,0 +1,14 @@
+apiVersion: v1
+data:
+  CONFENV: "0.1"
+  LDAP_HOSTNAME: ucs-3908.nightshift.intranet
+  LDAP_SEARCH_BIND_DN: Administrator@nightshift.intranet
+  LDAP_USER_BASE_DN: dc=nightshift,dc=intranet
+  LDAP_SEARCH_BIND_PASSWORD: 2e96b256#BBB
+  MYSQL_DATABASE: guac_db
+  MYSQL_USER: guac_user
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: guacamole-config-env
+  name: config-env

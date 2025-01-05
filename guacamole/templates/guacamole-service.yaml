@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert --chart --file ./guacamole.yml
+    kompose.version: 1.35.0 (9532ceef3)
+  labels:
+    io.kompose.service: guacamole
+  name: guacamole
+spec:
+  ports:
+    - name: "3330"
+      port: 3330
+      targetPort: 8080
+  selector:
+    io.kompose.service: guacamole
